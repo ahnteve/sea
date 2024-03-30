@@ -17,8 +17,8 @@ Fish[] createFishes() {
   Fish[] fishes = {
     new Fish(120, 500, 100, #FFB74B),
     new Fish(800, 100, 80, #FF0000),
-    new Fish(400, 700, 150, #00FF00),
-    new Fish(600, 300, 140, #00FFFF),
+    new Fish(400, 700, 150, #00FF00, -2),
+    new Fish(600, 300, 140, #00FFFF, -3),
   };
   return fishes;
 }
