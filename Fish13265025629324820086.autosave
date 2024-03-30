@@ -3,30 +3,25 @@ class Fish {
   private float y;
   private int size;
   private color c;
+  private color darkerColor;
   private float fishWidth;
   private float fishHeight;
   private int xDir;
 
   Fish(float x, float y, int size, color c) {
-    this(x, y, size, c, 2);
-  }
-  
-  Fish(float x, float y, int size, color c, int xDir) {
     this.x = x;
     this.y = y;
     this.size = size;
     this.c = c;
+    this.darkerColor = darkerColor(c);
     this.fishWidth = size * 1.2;
     this.fishHeight = size / 3 * 2;
-    this.xDir = xDir;
+    this.xDir = 2;
   }
 
   public void move() {
     x += xDir;
-
-    if (isAtLeftEdge()) {
-      reverseXDirection();
-    } else if (isAtRightEdge()) {
+    if (isAtLeftEdge() || isAtRightEdge()) {
       reverseXDirection();
     }
   }
@@ -61,8 +56,7 @@ class Fish {
     pushStyle();
 
     noStroke();
-    color finColor = darkerColor(c);
-    fill(finColor);
+    fill(darkerColor);
 
     beginShape();
     vertex(x + size * 0.25, y - (size * 0.2));
@@ -121,8 +115,7 @@ class Fish {
     pushStyle();
 
     noStroke();
-    color finColor = darkerColor(c);
-    fill(finColor);
+    fill(darkerColor);
 
     beginShape();
     vertex(x - size * 0.25, y - (size * 0.2));
@@ -142,13 +135,27 @@ class Fish {
     pushStyle();
 
     noStroke();
-    fill(c);
+    //fill(c);
 
-    beginShape();
-    vertex(x, y);
-    bezierVertex(x - size * 0.25, y - fishHeight / 2, x - size * 0.75, y - fishHeight / 2, x - size, y);
-    vertex(x - fishWidth, y + size * 0.2);
-    bezierVertex(
+    color startColor = c;
+    color endColor = darkerColor;
+    PGraphics sourceImage = createGraphics(width, height);
+    sourceImage.beginDraw();
+    for (int i = 0; i < sourceImage.width; ++i) {
+      color lerpColor = lerpColor(startColor, endColor, (float)i / sourceImage.width);
+      sourceImage.stroke(lerpColor);
+      println(sourceImage.width);
+      sourceImage.line(0, i, sourceImage.width, i);
+    }
+    sourceImage.endDraw();
+
+    PGraphics maskImage = createGraphics(width, height);
+    maskImage.beginDraw();
+    maskImage.beginShape();
+    maskImage.vertex(x, y);
+    maskImage.bezierVertex(x - size * 0.25, y - fishHeight / 2, x - size * 0.75, y - fishHeight / 2, x - size, y);
+    maskImage.vertex(x - fishWidth, y + size * 0.2);
+    maskImage.bezierVertex(
       x - fishWidth * 0.95,
       y + size * 0.2,
       x - fishWidth * 0.95,
@@ -156,9 +163,13 @@ class Fish {
       x - fishWidth,
       y - size * 0.2
       );
-    vertex(x - size, y);
-    bezierVertex(x - size * 0.75, y + fishHeight / 2, x - size * 0.25, y + fishHeight / 2, x, y);
-    endShape();
+    maskImage.vertex(x - size, y);
+    maskImage.bezierVertex(x - size * 0.75, y + fishHeight / 2, x - size * 0.25, y + fishHeight / 2, x, y);
+    maskImage.endShape();
+    maskImage.endDraw();
+    sourceImage.mask(maskImage);
+
+    image(sourceImage, x, y);
 
     popStyle();
 
