@@ -1,58 +1,83 @@
 void setup() {
   size(1280, 1024);
+  
+  new Fish();
 }
 
 void draw() {
   background(#0000FF);
-  drawFish(100, 100);
+  drawFish(10, 100, 100, color(#FFB74B));
+  drawFish(200, 200, 200, color(#FF0000));
 }
 
 
-void drawFish(float x, float y) {
+void drawFish(float x, float y, int size, color c) {
+  // fin
   pushStyle();
 
   noStroke();
-  fill(#CB780A);
+  color finColor = darkerColor(c);
+  fill(finColor);
 
   beginShape();
-  vertex(26, 80);
-  vertex(62, 65);
-  vertex(66, 77);
+  vertex(x + size * 0.25, y - (size * 0.2));
+  vertex(x + size * 0.62, y - (size * 0.35));
+  vertex(x + size * 0.66, y - (size * 0.2));
   endShape();
-
 
   beginShape();
-  vertex(25, 117);
-  vertex(51, 135);
-  vertex(56, 120);
+  vertex(x + size * 0.25, y + (size * 0.2));
+  vertex(x + size * 0.62, y + (size * 0.35));
+  vertex(x + size * 0.66, y + (size * 0.2));
   endShape();
-
-
-  fill(#FFB74B);
+  
+  popStyle();
+  
+  // body
+  pushStyle();
+  
+  noStroke();
+  fill(c);
+  
   beginShape();
-
-  vertex(0, 100);
-  bezierVertex(25, 66, 75, 66, 100, 100);
-  vertex(120, 120);
-  bezierVertex(115, 120, 115, 80, 120, 80);
-  vertex(100, 100);
-  bezierVertex(75, 133, 25, 133, 0, 100);
-
+  vertex(x, y);
+  bezierVertex(x + size * 0.25, y - size / 3, x + size * 0.75, y - size / 3, x + size, y);
+  vertex(x + size * 1.2, y + size * 0.2);
+  bezierVertex(
+    x + (size + size * 0.2) * 0.95,
+    y + size * 0.2,
+    x + (size + size * 0.2) * 0.95,
+    y - size * 0.2,
+    x + size + size * 0.2,
+    y - size * 0.2
+  );
+  vertex(x + size, y);
+  bezierVertex(x + size * 0.75, y + size / 3, x + size * 0.25, y + size / 3, x, y);
   endShape();
+  
+  popStyle();
 
+  // pupil
+  pushStyle();
+  
+  noStroke();
   fill(#FFFFFF);
-  circle(15, 95, 8);
-
+  circle(x + size * 0.15, y - size * 0.05, size * 0.08);
   fill(#000000);
-  circle(16, 95, 6);
-
+  circle(x + size * 0.16, y - size * 0.05, size * 0.06);
   fill(#FFFFFF);
-  circle(14, 94, 3);
-
-  strokeWeight(3);
-  noFill();
-  stroke(#CB780A);
-
+  circle(x + size * 0.14, y - size * 0.04, size * 0.03);
 
   popStyle();
+}
+
+color darkerColor(color c) {
+  return darkerColor(c, 50);
+}
+
+color darkerColor(color c, int amount) {
+  float r = max(red(c) - amount, 0);
+  float g = max(green(c) - amount, 0);
+  float b = max(blue(c) - amount, 0);
+  return color(r, g, b);
 }
